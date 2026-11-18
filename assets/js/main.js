@@ -90,15 +90,16 @@
     lbCount.textContent = (pos + 1) + " / " + list.length;
   }
   function openAt(li) {
-    list = works.filter(function (w) { return !w.hidden; });
-    if (list.indexOf(li) < 0) list = works.slice();
+    list = viewable.filter(function (w) { return !w.hidden; });
+    if (list.indexOf(li) < 0) list = viewable.slice();
     show(list.indexOf(li));
     if (typeof lb.showModal === "function") lb.showModal(); else lb.setAttribute("open", "");
     doc.body.style.overflow = "hidden";
   }
   function closeLb() { if (lb.open) lb.close(); }
   lb.addEventListener("close", function () { doc.body.style.overflow = ""; });
-  works.forEach(function (li) { li.querySelector(".work-btn").addEventListener("click", function () { openAt(li); }); });
+  var viewable = works.filter(function (w) { return !w.classList.contains("work--link"); });
+  viewable.forEach(function (li) { li.querySelector(".work-btn").addEventListener("click", function () { openAt(li); }); });
   lb.querySelector(".lb-prev").addEventListener("click", function () { show(pos - 1); });
   lb.querySelector(".lb-next").addEventListener("click", function () { show(pos + 1); });
   lb.querySelector(".lb-close").addEventListener("click", closeLb);
