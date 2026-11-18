@@ -1,0 +1,22 @@
+{
+  "name": "Borislav Knežević – grafički dizajner",
+  "short_name": "B. Knežević",
+  "lang": "sr-Latn",
+  "start_url": "./",
+  "scope": "./",
+  "display": "browser",
+  "background_color": "#0D0E24",
+  "theme_color": "#0D0E24",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
