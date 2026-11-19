@@ -231,6 +231,7 @@ ul, ol { list-style: none; }
 .field [aria-invalid="true"] { border-color: var(--red-on-dark); }
 .form-err { color: var(--red-on-dark); font-weight: 600; font-size: .95rem; min-height: 1.2em; margin-bottom: 10px; }
 .form .btn { width: 100%; }
+.form-err.is-ok { color: #6EE7A0; }
 .form-note { margin-top: 12px; font-size: .86rem; color: var(--muted-2); }
 .dl-title { font-family: var(--text); font-weight: 600; font-size: .95rem; color: var(--muted-2); margin: 34px 0 12px; }
 .downloads li + li { margin-top: 10px; }

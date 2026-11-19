@@ -192,19 +192,28 @@
   function boot() { layout(); if (!reduce) setTimeout(spin, 450); else announce(); }
   if (first.complete) boot(); else { first.addEventListener("load", boot, { once: true }); first.addEventListener("error", boot, { once: true }); }
 
-  /* ---------- contact form: opens the e-mail app with a prefilled message ---------- */
+  /* ---------- contact form: sends straight to e-mail via FormSubmit ---------- */
   var form = doc.getElementById("contact-form");
   if (form) form.addEventListener("submit", function (ev) {
     ev.preventDefault();
     var name = form.name.value.trim(), from = form.email.value.trim(), msg = form.message.value.trim();
     var err = form.querySelector(".form-err");
+    var btn = form.querySelector("button[type=submit]");
     var okMail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(from);
     [["name", !name], ["email", !okMail], ["message", !msg]].forEach(function (p) { form[p[0]].setAttribute("aria-invalid", String(p[1])); });
+    err.classList.remove("is-ok");
     if (!name || !okMail || !msg) { err.textContent = form.dataset.err; return; }
-    err.textContent = "";
-    var subject = form.dataset.subject + " – " + name;
-    var body = msg + "\n\n" + name + "\n" + from;
-    window.location.href = "mailto:" + form.dataset.email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    if (form._honey.value) return;
+    var label = btn.innerHTML;
+    btn.disabled = true; btn.textContent = form.dataset.sending; err.textContent = "";
+    fetch("https://formsubmit.co/ajax/" + form.dataset.email, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ name: name, email: from, message: msg, _subject: form.dataset.subject + " – " + name, _replyto: from, _template: "table" })
+    }).then(function (r) { return r.json().then(function (j) { if (!r.ok || String(j.success) !== "true") throw new Error(j.message || "fail"); }); })
+      .then(function () { form.reset(); err.classList.add("is-ok"); err.textContent = form.dataset.ok; })
+      .catch(function () { err.textContent = form.dataset.fail; })
+      .then(function () { btn.disabled = false; btn.innerHTML = label; });
   });
 
   /* ---------- copy e-mail ---------- */
