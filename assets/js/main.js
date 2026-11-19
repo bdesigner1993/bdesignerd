@@ -212,7 +212,7 @@
       body: JSON.stringify({ name: name, email: from, message: msg, _subject: form.dataset.subject + " – " + name, _replyto: from, _template: "table" })
     }).then(function (r) { return r.json().then(function (j) { if (!r.ok || String(j.success) !== "true") throw new Error(j.message || "fail"); }); })
       .then(function () { form.reset(); err.classList.add("is-ok"); err.textContent = form.dataset.ok; })
-      .catch(function () { err.textContent = form.dataset.fail; })
+      .catch(function (e) { err.textContent = /activat/i.test(e.message) ? "FormSubmit: " + e.message : form.dataset.fail; })
       .then(function () { btn.disabled = false; btn.innerHTML = label; });
   });
 
