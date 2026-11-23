@@ -192,6 +192,34 @@
   function boot() { layout(); if (!reduce) setTimeout(spin, 450); else announce(); }
   if (first.complete) boot(); else { first.addEventListener("load", boot, { once: true }); first.addEventListener("error", boot, { once: true }); }
 
+  /* ---------- skill rings: fill up when they scroll into view ---------- */
+  var rings = Array.prototype.slice.call(doc.querySelectorAll(".ring"));
+  function fillRing(r) {
+    if (r.classList.contains("is-on")) return;
+    r.classList.add("is-on");
+    var num = r.querySelector(".num"), end = +r.dataset.value;
+    if (reduce) { num.textContent = end; return; }
+    var t0 = null;
+    (function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / 1600), e = 1 - Math.pow(1 - p, 3);
+      num.textContent = Math.round(end * e);
+      if (p < 1) requestAnimationFrame(step);
+    })(performance.now());
+  }
+  if ("IntersectionObserver" in window && !reduce) {
+    rings.forEach(function (r) { r.querySelector(".num").textContent = "0"; });
+    var rio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var i = rings.indexOf(en.target);
+        setTimeout(function () { fillRing(en.target); }, (i % 4) * 140);
+        rio.unobserve(en.target);
+      });
+    }, { threshold: 0.5 });
+    rings.forEach(function (r) { rio.observe(r); });
+  } else rings.forEach(fillRing);
+
   /* ---------- contact form: sends straight to e-mail via FormSubmit ---------- */
   var form = doc.getElementById("contact-form");
   if (form) form.addEventListener("submit", function (ev) {
