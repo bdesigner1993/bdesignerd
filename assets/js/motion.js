@@ -95,6 +95,9 @@
     b.addEventListener("pointerdown", function () { gsap.fromTo(b, { scale: 0.92 }, { scale: 1, duration: 0.35, ease: "back.out(3)" }); });
   });
 
+  gsap.from(".vid", { y: 50, autoAlpha: 0, duration: 0.7, stagger: 0.08, ease: "power3.out",
+    scrollTrigger: { trigger: ".videos", start: "top 88%", once: true } });
+
   /* ---------- 6. services + timeline rows ---------- */
   [".services li", ".timeline li"].forEach(function (sel) {
     $(sel).forEach(function (li) {

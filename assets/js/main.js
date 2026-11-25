@@ -192,6 +192,25 @@
   function boot() { layout(); if (!reduce) setTimeout(spin, 450); else announce(); }
   if (first.complete) boot(); else { first.addEventListener("load", boot, { once: true }); first.addEventListener("error", boot, { once: true }); }
 
+  /* ---------- videos: load only when clicked, one plays at a time ---------- */
+  Array.prototype.slice.call(doc.querySelectorAll(".vid-btn")).forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      Array.prototype.slice.call(doc.querySelectorAll(".vid video")).forEach(function (v) { v.pause(); });
+      var v = doc.createElement("video");
+      v.src = btn.dataset.src;
+      v.poster = btn.querySelector("img").src;
+      v.controls = true; v.autoplay = true; v.muted = true; v.loop = true;
+      v.setAttribute("playsinline", ""); v.setAttribute("preload", "auto");
+      v.setAttribute("aria-label", btn.getAttribute("aria-label"));
+      v.addEventListener("play", function () {
+        Array.prototype.slice.call(doc.querySelectorAll(".vid video")).forEach(function (o) { if (o !== v) o.pause(); });
+      });
+      btn.replaceWith(v);
+      var p = v.play(); if (p && p.catch) p.catch(function () {});
+      v.focus();
+    });
+  });
+
   /* ---------- skill rings: fill up when they scroll into view ---------- */
   var rings = Array.prototype.slice.call(doc.querySelectorAll(".ring"));
   function fillRing(r) {
